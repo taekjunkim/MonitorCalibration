@@ -1,5 +1,4 @@
-# MonitorCalibration
-- Not for general use
+# MonitorCalibration 
 
 ## I already have photometer measurements for R,G,B
 - e.g., 51-red.txt, 102-red.txt, 153-red.txt, 204-red.txt, 255-red.txt
