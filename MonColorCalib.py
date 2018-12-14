@@ -58,9 +58,9 @@ def main(RGB=None,xyY=None):
     
     pLevel = np.arange(51,51*(5+1),51)/255;
     fit_RGB = [None]*3;
-    fit_RGB[0] = least_squares(powerFit,[2,1],args=(pLevel,cdMtx['red']));
-    fit_RGB[1] = least_squares(powerFit,[2,1],args=(pLevel,cdMtx['green']));
-    fit_RGB[2] = least_squares(powerFit,[2,1],args=(pLevel,cdMtx['blue']));    
+    fit_RGB[0] = least_squares(powerFit,[2,0.1],args=(pLevel,cdMtx['red']));
+    fit_RGB[1] = least_squares(powerFit,[2,0.1],args=(pLevel,cdMtx['green']));
+    fit_RGB[2] = least_squares(powerFit,[2,0.1],args=(pLevel,cdMtx['blue']));    
  
     ### Color matching function: CIE1931 - RGB to XYZ    
     CMFraw = pd.read_csv('cie1931_XYZ_CMF.csv',header=None);
