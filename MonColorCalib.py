@@ -74,6 +74,7 @@ def main(RGB=None,xyY=None):
     if xyY != None:
         ### Spectral power distribution
         RGBfit = least_squares(getRGBAtxyY,np.array([100.0,100.0,100.0]),
+                               bounds=([0,0,0],[255,255,255]),
                                args=(xyY,cMtx,CMF,fit_RGB));
         return RGBfit;
     if RGB != None:
