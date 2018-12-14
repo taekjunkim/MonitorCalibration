@@ -36,7 +36,8 @@ def main(RGB=None,xyY=None):
     ### We can calculate gamma & R,G,B intensity (as a function of lambda) from here
     cMtx = pd.DataFrame();
     cName = ['red','green','blue'];
-    Direc = './colorCalRig1Sept2016/';    
+    #Direc = './colorCalRig1Sept2016/';    
+    Direc = './Dec2018_BenQ_Rig1/';        
     for i in range(0,3):
         cMtx[cName[i]]="";    
         for j in range(1,5+1):
@@ -64,9 +65,9 @@ def main(RGB=None,xyY=None):
     ### Color matching function: CIE1931 - RGB to XYZ    
     CMFraw = pd.read_csv('cie1931_XYZ_CMF.csv',header=None);
     CMF = pd.DataFrame()
-    CMF['r'] = CMFraw.iloc[:,1];
-    CMF['g'] = CMFraw.iloc[:,2];
-    CMF['b'] = CMFraw.iloc[:,3];
+    CMF['X'] = CMFraw.iloc[:,1];
+    CMF['Y'] = CMFraw.iloc[:,2];
+    CMF['Z'] = CMFraw.iloc[:,3];
     CMF.index = range(360,360+471);
     CMF = CMF.loc[range(380,784,4)];   ### CMF sampled every 4nm (4 will be multiplied later)
 
@@ -91,9 +92,9 @@ def getRGBAtxyY(RGB,xyY,cMtx,CMF,fit_RGB):
                      (RGB[1]/255)**fit_RGB[1].x[0]*cMtx['green'][0]['255'] + \
                      (RGB[2]/255)**fit_RGB[2].x[0]*cMtx['blue'][0]['255'];
     SPD_CMF.index = cMtx['red'][0]['nm'];   
-    XYZnow = [np.dot(SPD_CMF,CMF['r'])*683*4,
-              np.dot(SPD_CMF,CMF['g'])*683*4,
-              np.dot(SPD_CMF,CMF['b'])*683*4];
+    XYZnow = [np.dot(SPD_CMF,CMF['X'])*683*4,
+              np.dot(SPD_CMF,CMF['Y'])*683*4,
+              np.dot(SPD_CMF,CMF['Z'])*683*4];
     XYZnow = np.array(XYZnow);
     #import pdb; pdb.set_trace();
     
@@ -111,7 +112,7 @@ def getLumAtRGB(RGB,cMtx,CMF,fit_RGB):
     SPD_CMF.index = cMtx['red'][0]['nm'];         
     
     ### Y of XYZ is computed
-    return np.dot(SPD_CMF,CMF['g'])*683*4;
+    return np.dot(SPD_CMF,CMF['Y'])*683*4;
     
 def powerFit(X,pLevel,Lum):
     y = (pLevel**X[0])*X[1];
