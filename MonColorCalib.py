@@ -78,10 +78,6 @@ def main(RGB=None,xyY=None):
             dNow = pd.read_csv(txtName);
             dNow.columns = ['nm',stepNum];
             dNow = dNow.drop(index=0);
-            #if j==1:
-            #    cMtx[cName[i]] = [dNow];
-            #else:
-            #    cMtx[cName[i]][0][stepNum] = dNow[stepNum];
             cMtx[cName[i]] = pd.merge(cMtx[cName[i]],dNow,on='nm',how='left');   
         cMtx[cName[i]] = cMtx[cName[i]].interpolate();   ### interpolate to have 1nm resolution        
     
