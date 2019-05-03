@@ -5,7 +5,7 @@ Created on Tue Aug  7 16:09:20 2018
 Minotor Color calibration
 
 Usage: import MonColorCalib as MC
-       e.g., Lum([x,y,Y(cd/m2)]) = MC.main(RGB=[50,50,50]);
+       e.g., Lum = MC.main(RGB=[50,50,50]); ## Lum = [x,y,Y(cd/m2)];
        e.g., RGBfitted = MC.main(xyY=[0.33,0.33,8]);       
        e.g., MC.makeTable();       
 
@@ -56,9 +56,10 @@ target xyY
 
 import pandas as pd;
 import numpy as np;
+import matplotlib.pyplot as plt;
 from scipy.optimize import least_squares;
 
-def main(RGB=None,xyY=None):
+def main(RGB=None,xyY=None,fig=0,out=1):
     
 
     ### read photometer measurement
@@ -98,7 +99,25 @@ def main(RGB=None,xyY=None):
     fit_RGB[1] = least_squares(powerFit,[2,0.1],args=(pLevel[0:4],cdMtx['green'][0:4]));
     fit_RGB[2] = least_squares(powerFit,[2,0.1],args=(pLevel[0:4],cdMtx['blue'][0:4]));    
 
- 
+    if fig == 1:
+        xValues = np.arange(0,256,1)/255;
+        plt.figure(figsize=(10,3));
+        plt.subplot(1,3,1);
+        plt.plot(np.arange(51,306,51),cdMtx['red'][0:5],'ro');
+        plt.plot(xValues*255,xValues**fit_RGB[0].x[0]*fit_RGB[0].x[1],'r');     
+        plt.xlim((-5,260));
+        plt.ylim((-0.01,0.5));
+        plt.subplot(1,3,2);
+        plt.plot(np.arange(51,306,51),cdMtx['green'][0:5],'go');
+        plt.plot(xValues*255,xValues**fit_RGB[1].x[0]*fit_RGB[1].x[1],'g');  
+        plt.xlim((-5,260));       
+        plt.ylim((-0.01,0.5));
+        plt.subplot(1,3,3);
+        plt.plot(np.arange(51,306,51),cdMtx['blue'][0:5],'bo');
+        plt.plot(xValues*255,xValues**fit_RGB[2].x[0]*fit_RGB[2].x[1],'b');  
+        plt.xlim((-5,260));
+        plt.ylim((-0.01,0.5));
+    
     ### Color matching function: CIE1931 - RGB to XYZ    
     CMFraw = pd.read_csv('cie1931_XYZ_CMF.csv',header=None);
     CMF = pd.DataFrame()
@@ -113,9 +132,13 @@ def main(RGB=None,xyY=None):
         RGBfit = least_squares(getRGBAtxyY,np.array([100.0,100.0,100.0]),
                                bounds=([0,0,0],[255,255,255]),
                                args=(xyY,cMtx,CMF,fit_RGB));
+        if out==1:                       
+            print(RGBfit);                       
         return RGBfit;
     if RGB != None:
         Lum = getLumAtRGB(RGB,cMtx,CMF,fit_RGB);
+        if out==1:
+            print(Lum);
         return Lum;
 
 def getRGBAtxyY(RGB,xyY,cMtx,CMF,fit_RGB):
@@ -189,6 +212,6 @@ def makeTable():
         for j in range(0,xyTable.shape[0]):
             xyYnow = np.hstack((xyTable[j,:],LumTable[i]));
             xyYnow = list(xyYnow);
-            RGBfitted = main(xyY=xyYnow);
+            RGBfitted = main(xyY=xyYnow,out=0);
             print(np.round(RGBfitted.x));
     
