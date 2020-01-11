@@ -11,3 +11,7 @@
    - dot product of SPD and CMF (Color Matching Function)
    - For CMF, CIE1931 is used
 - Estimate the nearest RGB for a given xyY
+
+## Version1 vs. Version2
+- Version1 assumes that R,G,B gun outputs follow a gamma function
+- In Version2, intermediate R,G,B values were estimated from spline functions
